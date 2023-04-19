@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci Sequence</title>
+
+    <script>
+        function sendPostRequest() {
+            const limit = document.getElementById('limit').value;
+            const data = new FormData();
+            data.append('limit', limit);
+
+            fetch('fibonacci.php', {
+                method: 'POST',
+                body: data
+            })
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById('output').innerHTML = text.replace(/\n/g, '<br>');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+</head>
+<body>
+    <h1>Fibonacci Sequence</h1>
+    <label for="limit">Maximum number:</label>
+    <input type="number" id="limit" name="limit" value="34" min="0">
+    <button onclick="sendPostRequest()">Generate</button>
+    <div id="output"></div>
+</body>
+</html>
