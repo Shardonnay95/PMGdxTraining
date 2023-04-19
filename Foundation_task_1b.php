@@ -1,7 +1,7 @@
 <?php
 
 // Constants
-define("SAMPLE_ARRAY_ARR", [1, 1, 1, 1, 1]);
+define("SAMPLE_ARRAY_ARR", [1, 1, 1, 1, 14]);
 
 function addAll($InputArr, $TotalInt = 0) {
     if (count($InputArr) == 0) {

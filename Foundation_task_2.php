@@ -15,7 +15,7 @@ function generateFibonacciSequence($LimitInt) {
     return $FibonacciArr;
 }
 
-$LimitInt = 34;
+$LimitInt = 0;
 $FibonacciArr = generateFibonacciSequence($LimitInt);
 
 foreach ($FibonacciArr as $FibonacciNumberInt) {

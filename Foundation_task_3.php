@@ -4,14 +4,15 @@ class Palindrome {
 
     public static function isPalindrome($Word) {
         $LowerCaseWordStr = strtolower($Word);
-        $SanitizedWordStr = preg_replace('/\s+/', '', $LowerCaseWordStr);
+        $Replace = array("/'/", "/\s/");
+        $SanitizedWordStr = preg_replace($Replace, '', $LowerCaseWordStr);
         $ReversedWordStr = strrev($SanitizedWordStr);
-
+        echo $SanitizedWordStr;
         return $SanitizedWordStr === $ReversedWordStr;
     }
 }
 
-$InputWordStr = 'Never Odd Or Even';
+$InputWordStr = "Don't nod";
 
 if (Palindrome::isPalindrome($InputWordStr)) {
     echo 'Palindrome';
