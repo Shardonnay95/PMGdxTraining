@@ -24,4 +24,5 @@ if (isset($_POST['limit'])) {
         echo $FibonacciNumberInt . PHP_EOL;
     }
 }
+
 ?>
