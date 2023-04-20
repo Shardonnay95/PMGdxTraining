@@ -19,7 +19,8 @@ class ItemOwners {
 $ItemsArr = array(
     "Baseball Bat" => "John",
     "Golf ball" => "Stan",
-    "Tennis Racket" => "John"
+    "Tennis Racket" => "John",
+    "Stan" => "Cap",
 );
 echo json_encode(ItemOwners::groupByOwners($ItemsArr));
 
