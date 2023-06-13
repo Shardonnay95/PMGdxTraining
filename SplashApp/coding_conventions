@@ -1,0 +1,421 @@
+
+I will need us to code a Twitter like app together using, PHP, JavaScript, CSS, HTML 
+and MySQL database. It will need to have the following functionality: user login, creating 
+a new account, editing and viewing your own profile and posting and seeing others post. 
+Throughout making this Twitter like application we need to ensure that security is up to par. 
+Meaning we must hash person details and login details, must prevent a person from seeing the home 
+page with post, and profile page if they are not logged in. No SQL or HTML injection or any 
+code injections must be able to be done as well. Now I will send the coding conventions we 
+must adhere to throughout this project and then we can go into more detail regarding the app 
+further along our chat. Here is the coding conventions, please confirm you understand afterwards:
+
+Code and Naming Conventions
+
+For PHP:
+
+1. Folder Naming Conventions:
+    my_folder_name/my_sub_folder_name
+
+2. File Naming Conventions:
+    If background script, then call file background_script_some_explanation.php
+    If cron script, then call the file cron_some_explanation.php
+    If class script, the call the file some_new.class.php
+
+3.Function Naming Code Conventions:
+    All functions should be named using camelCase. The first word in a function should be a verb
+    that describes what the function does.
+
+    Correct:
+    function countStudents() {...}
+    function sortStudentsByName() {...}
+    function getStudentArray() {...}
+
+    Incorrect:
+    function studentsCount() {...}
+    function studentsByName() {...}
+    function studentArraySetter() {...}
+
+4.Constants Code Conventions:
+    Constants inside and outside of a class should be UPPER_CASE_UNDERSCORE.
+    A define’s case insensitive flag should always be set to false.
+
+    Constants must be appended with its type:
+
+    Correct:
+    Define(“MAX_NUMBER_OF_STUDENTS_INT”, ‘30’);
+    Define(“FRUIT_ARR”, [‘apple’, ‘pear’, ‘grape’]);
+    const DEV0_STR = ‘Dev0’;
+
+    Incorrect:
+    Define (“Max_Students_Int”, 2);
+    Define (“MIN_SCORE”, 0.5);
+    Define (“MIN_SCORE_DBL”, 0.5, false);
+    const DEV0 = ‘Dev0’;
+
+5.Variable Naming Code Conventions:
+    Naming variables and functions should be as descriptive as possible. PascalCase. Always take
+    into consideration that others will be working on your code in the future, and you want to make it
+    as easy as possible for them to understand what you did. The variable type should be appended
+    to the variable name.
+
+    PHP variable types and suffixes are:
+    Integer (Int)
+    Float (Flt)
+    Double (Dbl)
+    Boolean (Bool)
+    Array (Arr)
+    Object (Obj)
+    String (Str)
+    Character (Char)
+    Date (Obj or Str)
+    Mixed (Mixed)
+
+    (Technically a string and a char is not a type in php, instead the compiler interprets them as
+    arrays)
+    For sDev UIElements and QControls the naming convention is to add the control type as a
+    prefix:
+    btnAcceptObj
+    txtFileContentObj
+    lstFileStatusObj
+    sUIElementSomeHTMLObj / SomeHTMLDisplayUIObj
+    actionClickedObj
+
+    When defining a variable the following must be done:
+    Variables must be named using PascalCase.
+    Properties (Class specific variables) must be preceded by their accessibility.
+    It is best practice that the first word of a variable should be a noun.
+    Variables must be appended with a type suffix.
+
+    Variables must be initialised… ALWAYS
+
+    Correct:
+    $StudentCoursesArr = array();
+    $StudentCoursesArray = array();
+    $StudentCountInt = 0;
+    $StudentObj = new Student();
+    $EnrolmentInstanceObj = null;
+    $this->actionClickedObj = new sUIElementsBase($this);
+    $StudentAssignmentObjArr = StudentAssignment::QueryArray(
+    QQ::All()
+    );
+
+    Incorrect:
+    $StudentArr = array();
+    $Counter = 0;
+    $CountInt = 0; //not descriptive enough
+    $StudentObj;
+    $GetStudentObj = getStudent();
+    $EnrolmentInstance = null;
+    $this->ClickedAction = new sUIElementsBase($this);
+    $StudentAssignmentArr = StudentAssignment::QueryArray(QQ::All());
+    
+    Variables representing collections of objects must be named in the plural. All other types must
+    be named in the singular:
+
+    Correct:
+    $StudentObj = null;
+    $StudentsArr = array(); [] //look at the difference in memory
+    Incorrect:
+    $StudentsObj = null;
+    $StudentArr = array();
+
+6. Inline styling
+
+    Correct:
+    style="width: 30%; height: 40px;"
+
+    Incorrect:
+    style="width:30%;height:40px"
+    String Concatenation
+
+    Correct:
+    $HtmlStr = ‘<p>'.$BenefitDisplayNameStr.', underwritten by Someone</p>’;
+    Incorrect:
+    $HtmlStr = ‘<p>' . $BenefitDisplayNameStr . ', underwritten by Someone</p>’;
+
+    Queries
+    Each QQ:: on a new line please
+
+7.Correct:
+
+    $ProductRolePlayerObjArr = ProductRolePlayer::QueryArray(
+    QQ::OrCondition(
+    QQ::In(QQN::ProductRolePlayer()->ProductObject->Id, $ActiveProductIdArr),
+    QQ::In(QQN::ProductRolePlayer()->ProductBenefitObject->Id, $ProductBenefitIdArr)
+    )
+    );
+
+    Incorrect:
+    $ProductRolePlayerObjArr =
+    ProductRolePlayer::QueryArray(QQ::OrCondition(QQ::In(QQN::ProductRolePlayer()->ProductO
+    bject->Id, $ActiveProductIdArr),QQ::In(QQN::ProductRolePlayer()->ProductBenefitObject->Id,
+    $ProductBenefitIdArr)));
+
+
+JAVASCRIPT/HTML:
+
+1. Folder Naming Conventions
+    my_folder_name/my_sub_folder_name
+
+2. File Naming Conventions
+    File script_some_explanation.js
+    https://www.w3schools.com/js/js_conventions.asp
+
+3. Naming Conventions
+    Element id’s : camelCase, no need to specify the type
+    selectedDivId
+
+    Then when we need to pass animal type as an example we populate the data- attribute
+    <ul>
+    <li data-animal-type="bird">Owl</li>
+    <li data-animal-type="fish">Salmon</li>
+    <li data-animal-type="spider">Tarantula</li>
+    </ul>
+
+    Variables : camelCase, no need to specify the type
+    firstName = "John";
+    lastName = "Doe";
+    price = 19.90;
+    tax = 0.20;
+    fullPrice = price + (price * tax);
+    Functions : camelCase
+    function toCelsius(fahrenheit) {
+    Page 5return (5 / 9) * (fahrenheit - 32);
+    } O
+    bjects :
+    var person = {
+    firstName: "John",
+    lastName: "Doe",
+    age: 50,
+    eyeColor: "blue"
+    };
+
+    // Base object, NOT pluralised when explicitly defining a singular idea/entity
+    let person = {
+    firstName: "Gary",
+    lastName: "Player",
+    age: 120
+    } 
+
+    // Primitive array or object can be pluralised, if internals are explicitly multiple concepts/things
+    let persons = ["Emily", "Susan", "Gabe"];
+    let additionalOptions = {
+    isClickable: true,
+    setPreview: false,
+    url: "anc.com"
+    } 
+
+    // Array of objects (with no key)
+    let personArray = [
+    {
+    name: "Emily",
+    surname: "Bester"
+    Page 6},
+    {
+    name: "Susan",
+    surname: "Venter"
+    },
+    {
+    name: "Gabe",
+    surname: "Young"
+    }
+    ];
+
+    // Object of objects (with keys)
+    let personList = {
+    "IdNumber123": {
+    name: "Emily",
+    surname: "Bester"
+    },
+    "IdNumber234": {
+    name: "Susan",
+    surname: "Venter"
+    },
+    "LastIdNumber": {
+    name: "Gabe",
+    surname: "Young"
+    }
+    };
+
+    // The difference between ***Array and ***List is debatable.
+    // Different languages use this terminology differently,
+    and how does list/array tell me I have a key or not...
+    let bananaCount = 12;
+    let stinkingFeelings = "This is my song about stuff";
+    let interestingNews = "JS is full of stuff!";
+
+    // Booleans - instant understanding of binary nature: try prefix with action-verb
+    let isComplete = false;
+    let hasContent = false;
+    let preventAction = true;
+    let forceReload = true;
+
+
+CSS:
+
+    1. CSS Classes Names:
+
+    selected-name
+    CSS
+
+    Correct:
+    .selected-name {
+    width: 100px;
+    } 
+    
+    Incorrect:
+    .selected-name{
+    width:100px;
+    } 
+
+SQL:
+    
+SQL {
+    Please use UPPERCASE for SQL operations
+
+    Incorrect:
+    select * from Policy WHERE Id in (1,2,3);
+    Correct:
+    SELECT * FROM Policy WHERE Id IN (1, 2, 3);
+    }
+
+
+Appendix:
+
+    function doSomething() : bool {}
+    if (true) return;
+
+    JS:
+    function doSomething() {}
+    doSomething = () => {}
+    function () {}
+    () => {}
+    Entities are always singular!
+    $NameStr = $InputStr ? $InputStr : ‘Anonymous’;
+    $NameStr = $InputStr ?? ‘Anonymous’;
+
+
+
+
+
+
+OVERVIEW
+This exercise will test your ability to create a basic PHP, MySQL, Javascript, Html based web
+application, starting from scratch.
+You will be required to setup a database and manage users and other sensitive data. This
+exercise will test your ability to create a PHP web application that conforms to best practices.
+
+INSTRUCTION
+Your project is described below with a task breakdown. Each task has a points allocation in
+brackets to indicate the level of complexity and provide an overall score for the project.
+1. Setup a MySQL database ​
+2. Create a “Users” table that will allow users to log in to your app. The following attributes
+are required: FirstName, LastName, EmailAddress, Username & Password ​
+3. Create a “Posts” table that will contain posts by users of the app. This table should have
+the following attributes as a minimum: PostTimeStamp, PostText, UserId (The Id of the
+user that posted it) ​
+4. Create a login page where users can be authenticated ​
+5. Once they have logged in, they must be directed to the logged in homepage. On this
+page they must see a list of “updates” or “posts” by other users and be able to post
+something themselves for others to see (Similar to twitter) ​
+6. Users must be able to open another secure page that displays their information and
+allows them to change anything ​
+7. Ensure that only logged in users can see any page that is not the login page. If they are
+not logged in, redirect them to the login page with a message that states they are not
+authenticated ​
+8. Security points: Take all security concerns into account when developing application.
+Ensure that authentication is secure and that data is safe ​(25),
+
+
+Now with the above information, lets start from the beginning (keep in mind the coding standards, security that we need in and the look and feel of a twitter like application). 
+
+Lets assume we will need an index.php file to start.
+Please note this apps name is Splash, if we can integrate that name and a splash like font for the name on the page.
+
+Here are the Database details you need to use: 
+
+Server: localhost, 
+Database: splashapp
+Username: root
+Password: ""
+
+Table 1: "posts" with the following columns - 
+	#	Name	Type	Collation	Attributes	Null	Default	Comments	
+	1	Id Primary	int			No	None		AUTO_INCREMENT	
+    2   UserId	int			No	None	
+	3	PostTimeStamp	timestamp			Yes	CURRENT_TIMESTAMP		DEFAULT_GENERATED	
+	4	PostText	varchar(115)	utf8mb4_0900_ai_ci		Yes	NULL	
+
+
+Table 2: "users" with the following columns - 
+	#	Name	Type	Collation	Attributes	Null	Default	Comments	
+	1	Id Primary	int			No	None		AUTO_INCREMENT	
+	2	FirstName	varchar(30)	utf8mb4_0900_ai_ci		Yes	NULL				
+	3	LastName	varchar(30)	utf8mb4_0900_ai_ci		Yes	NULL			
+	4	EmailAddress	varchar(30)	utf8mb4_0900_ai_ci		Yes	NULL			
+	5	Username	varchar(20)	utf8mb4_0900_ai_ci		Yes	NULL			
+	6	Password	varchar(50)	utf8mb4_0900_ai_ci		Yes	NULL				
+
+
+Before we start, here are some other things you need to take note off: Always Keep in mind the coding standards, security that we need in and that the app must have a look and feel of a twitter like app. The name of the app we are creating is called "Splash".  
+
+Note the below must always apply in terms if style and layout: 
+1. We need to integrate that name and a splash like font for the name on the page, 
+2. Keep to a white backround, 
+3. Heading colors are: #715CF8
+4. Heading Font is: Poppins ExtraBold
+5. Text with a Hyperlink color is: #715CF8
+6. Text with a Hyperlink Font is: Open Sans
+7. Normal text color is: #545454
+8. Normal text Font is: Open Sans
+9. Input blocks are rounded and border colour is; #545454
+10. Input Text in blocks color is: #545454
+11. Input Text in blocks Font is: Poppins Medium 
+12: Buttons are rounded
+13: Buttons are filled with #715CF8 as the color
+14: Buttons border color is #9584FF
+15: Button text color is: #FFFFFF
+16. Button text font is: Poppins 
+
+
+Now code a CreateAccount file where the user creates the account. For this page we need to:
+1. Hash the passwords and prevent sql injections and html injections
+2. Apply everthing that I noted above
+3. We must code in PHP, Javascript, HTML, CSS, MySQL
+4. Validation must be done for email, is it alrady in the datbase? If it is they need to be redirected to the login page and there should be message telling them that they already have an account and theymust log in. 
+5. Password validation as well, does the password in the database correspond with the email adress to allow them to login. Again display message if not
+6. Passowrd must contain a min of 0 characers when creating an account. Please write a message that indicated this and error message if password is not correct. 
+7. All these details need to be sent to the database and saved as I have presented the db, tables and colum names above.
+8. Astetically it needs to look similar to twitter but with the style I have added above. 
+9. Also, proper session handling would be required to manage user logins across pages. Be sure to include those 
+
+Create Account Page with the following info and Splash brading:
+    Create new Account - this is a Header
+    Already Registered? - this is a Text with Hyperlink (needs to link to login page if pressed)
+    Please enter your Username - Normal Text
+    Input Block for Username
+    Please enter Email - Normal Text
+    Input Block for email
+    Please enter Password - Normal Text
+    Input block for Password
+    Sign Up Button - Saves all details to database and created the user, then user will be redirected to homepage
+
+Now similarly lets do the login page: Login Page with the follwing info and Splash branding: 
+    Login - Header
+    Please enter Email - Normal Text
+    Input Block for email
+    Please enter Password - Normal Text
+    Login - Button that checks all details to database and validations, then user will be redirected to homepage if successfull and they are identified as a user in database 
+    Not a Member? Sign Up - This text is a hyperlink that will redirect the user to the Create Account Page. This also applies here 
+	For this page we need to:
+	1. Apply everthing that I noted above for te create account page.
+	2. We must code in PHP, Javascript, HTML, CSS, myswl
+
+Now we will need to code the home page: Homepage with follwing info, splash branding and functionality, note that the layout must be similar to that of Twitters home page, 
+therfore you can simulate it to be simmilar to the twitter homepage and add what is needed: 
+    User Picture in small round circle next to the usersname
+    User Name: Normal Text
+    Username with an @ in fornt - Normal Text
+    The post that they have written displayed as normal text
+    Button with message bubble icon that when you click it, you as the user can create a post as well and if you press 'post" it gets posted 
+    Button with Person outline icon that will take the user to their profile - Important, keep everthing in mind that i have previously stated!

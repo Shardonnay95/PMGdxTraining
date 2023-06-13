@@ -1,0 +1,551 @@
+config.php code:
+
+<?php
+$host = "localhost";
+$username = "root";
+$password = "";
+$dbname = "splashapp";
+
+$mysqli = new mysqli($host, $username, $password, $dbname);
+
+if ($mysqli->connect_error) {
+    die('Connection error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
+}
+?>
+
+
+create_account_handler.php code:
+
+<?php
+session_start();
+require_once 'config.php';
+
+$firstname = $mysqli->real_escape_string($_POST['firstname']);
+$lastname = $mysqli->real_escape_string($_POST['lastname']);
+$username = $mysqli->real_escape_string($_POST['username']);
+$email = $mysqli->real_escape_string($_POST['email']);
+$password = $mysqli->real_escape_string(password_hash($_POST['password'], PASSWORD_BCRYPT));
+
+$sql = "INSERT INTO users (FirstName, LastName, EmailAddress, Username, Password) 
+VALUES ('$firstname', '$lastname', '$email', '$username', '$password')";
+
+if ($mysqli->query($sql) === TRUE) {
+    $_SESSION['username'] = $username;
+    header('Location: home.php');
+    exit();
+} else {
+    echo "Error: " . $sql . "<br>" . $mysqli->error;
+}
+
+$mysqli->close();
+?>
+
+
+create_account.php code:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Account - Splash</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700|Open+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #545454;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #715CF8;
+            text-align: center;
+            margin-bottom: 1em;
+        }
+
+        input {
+            margin-bottom: 1em;
+            padding: 0.5em;
+            border-radius: 5px;
+            border-color: #545454;
+            color: #545454;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+        }
+
+        button {
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            border-color: #9584FF;
+            background-color: #715CF8;
+            color: #FFFFFF;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        p {
+            text-align: center;
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create new Account</h1>
+        <form action="create_account_handler.php" method="POST">
+            <input type="text" name="firstname" placeholder="Enter your First Name" required>
+            <input type="text" name="lastname" placeholder="Enter your Last Name" required>
+            <input type="text" name="username" placeholder="Enter your Username" required>
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="password" name="password" placeholder="Enter Password" required minlength="8">
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already Registered? <a href="login.php">Log in here</a></p>
+    </div>
+</body>
+</html>
+
+
+create_post.php code:
+
+<?php
+session_start();
+require_once 'config.php';
+
+$message = '';
+
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $postText = trim($_POST["postText"]);
+    $userId = $_SESSION['id'];
+
+    if (!empty($postText)) {
+        $insert_query = "INSERT INTO posts (PostText, UserId) VALUES (?, ?)";
+        $stmt = $mysqli->prepare($insert_query);
+        $stmt->bind_param("si", $postText, $userId);
+
+        if ($stmt->execute()) {
+            $message = "Your post was successfully created!";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Splash - Create Post</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create Post</h1>
+        <form action="create_post.php" method="POST">
+            <label for="postText">Post</label>
+            <textarea name="postText" id="postText"></textarea>
+            <button type="submit">Post</button>
+        </form>
+        <p><?php echo $message ?></p>
+        <a href="home.php">Back to home</a>
+    </div>
+</body>
+</html>
+
+home.php code:
+
+<?php
+session_start();
+
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
+
+require_once 'config.php';
+
+// Fetch posts from the database
+$postsQuery = "SELECT posts.*, users.username 
+               FROM posts 
+               INNER JOIN users ON posts.UserId = users.id 
+               ORDER BY posts.id DESC";
+$stmt = $mysqli->prepare($postsQuery);
+
+if (!$stmt) {
+    die('Error: ' . $mysqli->error);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+$posts = $result->fetch_all(MYSQLI_ASSOC);
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home - Splash</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700|Open+Sans&display=swap" rel="stylesheet">
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            color: #545454;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: #715CF8;
+            text-align: center;
+            margin-bottom: 1em;
+        }
+
+        form {
+            margin: 20px 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #545454;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px;
+            background-color: #715CF8;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .post {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post__username {
+            font-weight: bold;
+        }
+
+        .post__time {
+            font-size: 0.8em;
+        }
+
+        .post__content {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .post__actions button {
+            margin-right: 10px;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #715CF8;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
+        <form action="create_post.php" method="POST">
+            <input type="text" name="postText" placeholder="What's on your mind?" required>
+            <button type="submit">Post</button>
+        </form>
+        
+        <h2>Recent Posts:</h2>
+        <ul>
+            <?php foreach ($posts as $post): ?>
+                <li class="post">
+                    <div class="post__header">
+                        <span class="post__username"><?php echo htmlspecialchars($post['username']); ?></span>
+                        <span class="post__time"><?php echo htmlspecialchars($post['PostTimeStamp']); ?></span>
+                    </div>
+                    <div class="post__content"><?php echo htmlspecialchars($post['PostText']); ?></div>
+                    <div class="post__actions">
+                        <button>Like</button>
+                        <button>Retweet</button>
+                        <button>Reply</button>
+                    </div>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+
+        <a href="profile.php">Go to Profile</a>
+    </div>
+</body>
+</html>
+
+
+login_handler.php code:
+
+<?php
+session_start();
+require_once 'config.php';
+
+$email = $_POST['email'];
+$password = $_POST['password'];
+
+$query = "SELECT * FROM users WHERE EmailAddress = ?";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    if (password_verify($password, $row['Password'])) {
+        $_SESSION['id'] = $row['Id'];
+        header('Location: home.php');
+        exit();
+    } else {
+        echo "Invalid password.";
+    }
+} else {
+    echo "No user found with this email.";
+}
+$stmt->close();
+?>
+
+login.php code:
+
+<?php
+session_start();
+require_once 'config.php';
+
+if (isset($_SESSION['id'])) {
+    $id = $_SESSION['id'];
+    $query = "SELECT * FROM users WHERE id = ?";
+    $stmt = $mysqli->prepare($query);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $firstName = trim($_POST["firstName"]);
+        $lastName = trim($_POST["lastName"]);
+        $username = trim($_POST["username"]);
+        $email = trim($_POST["email"]);
+
+        if (!empty($firstName) && !empty($lastName) && !empty($username) && !empty($email)) {
+            $update_query = "UPDATE users SET FirstName = ?, LastName = ?, Username = ?, EmailAddress = ? WHERE id = ?";
+            $stmt = $mysqli->prepare($update_query);
+            $stmt->bind_param("ssssi", $firstName, $lastName, $username, $email, $id);
+            $stmt->execute();
+            header("Location: profile.php");
+            exit();
+        }
+    }
+} else {
+    header("Location: login.php");
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Splash - Profile</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Profile</h1>
+        <form action="login.php" method="POST">
+            <label for="firstName">First Name</label>
+            <input type="text" name="firstName" id="firstName" value="<?php echo $user['FirstName'] ?>" required>
+            <label for="lastName">Last Name</label>
+            <input type="text" name="lastName" id="lastName" value="<?php echo $user['LastName'] ?>" required>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" value="<?php echo $user['Username'] ?>" required>
+            <label for="email">Email Address</label>
+            <input type="text" name="email" id="email" value="<?php echo $user['EmailAddress'] ?>" required>
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</body>
+</html>
+
+
+profile.php code:
+
+
+<?php
+session_start();
+require_once 'config.php';
+
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$id = $_SESSION['id'];
+$query = "SELECT * FROM users WHERE id = ?";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $firstName = trim($_POST["firstName"]);
+    $lastName = trim($_POST["lastName"]);
+    $username = trim($_POST["username"]);
+    $email = trim($_POST["email"]);
+
+    if (!empty($firstName) && !empty($lastName) && !empty($username) && !empty($email)) {
+        $update_query = "UPDATE users SET FirstName = ?, LastName = ?, Username = ?, EmailAddress = ? WHERE id = ?";
+        $stmt = $mysqli->prepare($update_query);
+        $stmt->bind_param("ssssi", $firstName, $lastName, $username, $email, $id);
+        $stmt->execute();
+        header("Location: profile.php");
+        exit();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Splash - Profile</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Your Profile</h1>
+        <form action="profile.php" method="POST">
+            <label for="firstName">First Name</label>
+            <input type="text" name="firstName" id="firstName" value="<?php echo $user['FirstName'] ?>" />
+            <label for="lastName">Last Name</label>
+            <input type="text" name="lastName" id="lastName" value="<?php echo $user['LastName'] ?>" />
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" value="<?php echo $user['Username'] ?>" />
+            <label for="email">Email Address</label>
+            <input type="text" name="email" id="email" value="<?php echo $user['EmailAddress'] ?>" />
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</body>
+</html>
+
+style.css code:
+
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: #545454;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+h1 {
+    font-family: 'Poppins ExtraBold', sans-serif;
+    color: #715CF8;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+form {
+    margin: 30px auto;
+    width: 80%;
+}
+
+form label {
+    display: block;
+    margin: 5px 0;
+}
+
+form input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #545454;
+    color: #545454;
+    font-family: 'Poppins Medium', sans-serif;
+}
+
+form button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #715CF8;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+form button:hover {
+    background-color: #3a8a78;
+}
+
+
+Please make sure everything corresponds with the follwoing Database details and fix code IN FULL where needed so i can just copy and paste: 
+
+Server: localhost, 
+Database: splashapp
+Username: root
+Password: ""
+
+Table 1: "posts" with the following columns - 
+	#	Name	Type	Collation	Attributes	Null	Default	Comments	
+	1	Id Primary	int			No	None		AUTO_INCREMENT		
+	2	PostTimeStamp	timestamp			Yes	CURRENT_TIMESTAMP		DEFAULT_GENERATED	
+	3	PostText	varchar(115)	utf8mb4_0900_ai_ci		Yes	NULL		
+
+Table 2: "users" with the following columns - 
+	#	Name	Type	Collation	Attributes	Null	Default	Comments	
+	1	Id Primary	int			No	None		AUTO_INCREMENT	
+	2	FirstName	varchar(30)	utf8mb4_0900_ai_ci		Yes	NULL				
+	3	LastName	varchar(30)	utf8mb4_0900_ai_ci		Yes	NULL			
+	4	EmailAddress	varchar(30)	utf8mb4_0900_ai_ci		Yes	NULL			
+	5	Username	varchar(20)	utf8mb4_0900_ai_ci		Yes	NULL			
+	6	Password	varchar(50)	utf8mb4_0900_ai_ci		Yes	NULL	
