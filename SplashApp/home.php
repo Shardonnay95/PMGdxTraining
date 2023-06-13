@@ -54,10 +54,12 @@ $posts = $result->fetch_all(MYSQLI_ASSOC);
 
         form {
             margin: 20px 0;
+            display: flex;
+            align-items: center;
         }
 
         input[type="text"] {
-            width: 100%;
+            flex: 1;
             padding: 10px;
             margin: 5px 0;
             border-radius: 5px;
@@ -101,44 +103,23 @@ $posts = $result->fetch_all(MYSQLI_ASSOC);
             margin-top: 5px;
             margin-bottom: 10px;
         }
+
+        .profile-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#createPostForm').submit(function(e) {
-                e.preventDefault(); // Prevent form submission
-
-                var postText = $('#postText').val(); // Get the post text
-
-                $.ajax({
-                    type: 'POST',
-                    url: 'create_post.php',
-                    data: { postText: postText },
-                    dataType: 'json', // Expect JSON response
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            $('#postText').val(''); // Clear the post text field
-                            $('#postsContainer').prepend(response.postHtml); // Prepend the new post to the container
-                        }
-                    },
-                    error: function() {
-                        alert('An error occurred while creating the post.');
-                    }
-                });
-            });
-        });
-    </script>
 </head>
 <body>
     <div class="container">
         <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-        <form id="createPostForm">
-            <input type="text" id="postText" placeholder="What's on your mind?" required>
+        <form action="create_post.php" method="POST">
+            <input type="text" name="postText" placeholder="What's on your mind?" required>
             <button type="submit">Post</button>
         </form>
-        
-        <h2>Recent Posts:</h2>
-        <div id="postsContainer">
+
+        <div>
             <?php foreach ($posts as $post): ?>
                 <div class="post">
                     <div class="post__header">
@@ -150,5 +131,42 @@ $posts = $result->fetch_all(MYSQLI_ASSOC);
             <?php endforeach; ?>
         </div>
     </div>
+
+    <a href="profile.php" class="profile-button">Go to Profile</a>
+
+    <script>
+        // Function to handle the AJAX request and update the posts
+        function handleCreatePost() {
+            const form = document.querySelector('form');
+            const postText = document.querySelector('input[name="postText"]').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'create_post.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.status === 'success') {
+                        const newPostHtml = response.postHtml;
+                        const postsContainer = document.querySelector('.container > div');
+                        postsContainer.insertAdjacentHTML('afterbegin', newPostHtml);
+                        form.reset();
+                    } else {
+                        console.log('Error creating post');
+                    }
+                }
+            };
+
+            xhr.send('postText=' + encodeURIComponent(postText));
+        }
+
+        // Add event listener to the form submit event
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            handleCreatePost();
+        });
+    </script>
 </body>
 </html>
